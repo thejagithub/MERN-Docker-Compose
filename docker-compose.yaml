@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mern
+
+  backend:
+    build: mern/backend
+    container_name: backend
+    restart: always
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongo
+    networks:
+      - mern
+
+  frontend:
+    build: mern/frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - mern
+
+volumes:
+  mongo-data:
+    driver: local
+  
+
+networks:
+  mern:
+    driver: bridge
